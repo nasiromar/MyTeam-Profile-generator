@@ -6,15 +6,15 @@ const Employee = require('./lib/Employee');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const Manager = require('./lib/Manager');
-
+const renderPage = require('./assets/page-render');
 
 
 const Team = [];
+addManager();
 
-function getManager (){
-console.log('build your Team!');
-inquirer
-.prompt([
+function addManager (){
+inquirer.prompt([
+
 {
     type: 'input',
     name: 'managerName',
@@ -54,7 +54,7 @@ inquirer
 },
 {
     type: 'input',
-    name: 'managerOfficenumber',
+    name: 'managerOfficeNumber',
     message: 'Enter the managers office number?',
     validate: answer => {
         if(answer === '') {
@@ -63,37 +63,36 @@ inquirer
         }
         return true;
     }
-}
+},
 
 
 ]) .then((userResponse) => {
-    let mgr = new Manager (userResponse.managerName,
-        userResponse.managerId,userResponse.Email,
-        userResponse.managerOfiiceNumber);
+    let Mgr = new Manager (userResponse.managerName,
+        userResponse.managerId,userResponse.managerEmail,
+        userResponse.managerOfficeNumber);
 
-    Team.push(mgr);
+    Team.push(Mgr);
+    
+    addMembers();
 
-    addMembers ();
 
+});
+};
 
-}) 
-}
 
 //create function + create team//
 function addMembers () {
     console.log('build Team!');
-} inquirer.prompt([{
+ inquirer.prompt({
     type: "list",
-    name: "memberChoice",
+    name: "newTeamMember",
     message: "Would you like to add another team member?",
-    choices: [
-        "Engineer",
-        "Intern",
-        "No More Members"
-    ]
+    choices: [ "Engineer", "Intern", "No"]
+ })
 
-}]).then (userChoice => {
-    switch(userChoice.memberChoice) {
+
+.then (userChoice => {
+    switch(userChoice.newTeamMember) {
         case "Engineer":
             addEngineer();
             break ;
@@ -103,9 +102,9 @@ function addMembers () {
         default:
                 buiildteam();
     }
-
-})
-
+}
+)
+};
 
 
 function addEngineer() {
@@ -160,7 +159,7 @@ function addEngineer() {
 },
 ]).then ((userResponse) => {
     let Eng = new Engineer (userResponse.engineerName,
-        userResponse.engineerId,userResponse.Email,
+        userResponse.engineerId,userResponse.engineerEmail,
         userResponse.engineerGithub);
 
     Team.push(Eng);
@@ -207,7 +206,7 @@ function addIntern() {
 },
 {
     type: 'input',
-    name: 'interSchoool',
+    name: 'internSchool',
     message: 'Enter the Interns School',
     validate: answer => {
         if (answer < 0) {
@@ -217,12 +216,12 @@ function addIntern() {
         return true;
     }
         
-}
+},
 
 ]).then ((userResponse) => {
-    let Int = new Intern (userResponse.internName,
-        userResponse.internId,userResponse.Email,
-        userResponse.internGithub);
+   let Int = new Intern (userResponse.internName,
+     userResponse.internId,userResponse.internEmail,
+     userResponse.internSchool);
 
         Team.push(Int);
         addMembers ();
@@ -231,60 +230,11 @@ function addIntern() {
 
 };
 
-function addMembers() {
-    inquirer.prompt([{ 
-        type: 'List',
-        name: 'newTeamMember',
-        message: 'would you like to add another team member?',
-        choices: ['Manager', 'Engineer', 'Intern', 'No, Creat page'],
 
-}])
 
 function buiildteam () {
-    fs.writeFilesync(
+    fs.writeFileSync(
         './dist/index.html',renderPage(Team),'Utf-8'
     );
 }
-
-getManager();
-
-    
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
- 
 
